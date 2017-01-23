@@ -151,7 +151,7 @@ public class Paillier {
         return plaintextList;
     }
 
-    public BigInteger ciphertextSummation(ArrayList<BigInteger> ciphertextList) {
+    public BigInteger ciphertextSummation(ArrayList<BigInteger> ciphertextList, BigInteger cipherMask) {
 
         BigInteger ciphertext1;
         BigInteger ciphertext2;
@@ -161,7 +161,7 @@ public class Paillier {
         
             if (n == ciphertextList.size() - 1) {
                 ciphertext1 = ciphertextList.get(n);
-                ciphertext2 = new BigInteger("1");
+                ciphertext2 = cipherMask;
             }
             else {
                 ciphertext1 = ciphertextList.get(n);
@@ -226,10 +226,17 @@ public class Paillier {
 
         BigInteger ciphertext2;
 
+        Random rand = new Random();
+
+        BigInteger mask = new BigInteger(Integer.toString(rand.nextInt()));
+        BigInteger cipherMask = paillier.Encryption(mask);
+
         //BigInteger r = new BigInteger(paillier.bitLength, new Random());
 
-        BigInteger threshold = new BigInteger("4357");
-        BigInteger cipherThreshold = paillier.Encryption(threshold);
+        BigInteger threshold1 = new BigInteger("10000");
+        BigInteger threshold2 = new BigInteger("9998");
+        BigInteger cipherThreshold1 = paillier.Encryption(threshold1);
+        BigInteger cipherThreshold2 = paillier.Encryption(threshold2);
 
         /* encryption*/
         for (BigInteger plaintext : plaintextList) {
@@ -237,20 +244,66 @@ public class Paillier {
         }
 
         /* sum Ciphertexts */
-        ciphertextSum = paillier.ciphertextSummation(ciphertextList);
+        ciphertextSum = paillier.ciphertextSummation(ciphertextList, cipherMask);
 
-        /* sum PLaintexts */
+        /* sum Plaintexts */
         plaintextSum = paillier.plaintextSummation(plaintextList);
         
-        System.out.println("Ciphertext Sum [function] : " + ciphertextSum);
-        System.out.println("Threshold Ciphertext : " + cipherThreshold);
+        System.out.println("Ciphertext Sum: " + ciphertextSum);
         System.out.println();
-        System.out.println("CipherSum - cipherThreshold = " + ciphertextSum.subtract(cipherThreshold));
-        System.out.println("D(CipherSum) - D(cipherThreshold) = " + paillier.Decryption(ciphertextSum).subtract(paillier.Decryption(cipherThreshold)));
+        System.out.println("Plaintext Sum: " + plaintextSum);
+        System.out.println();
+        System.out.println("Threshold1 Ciphertext : " + cipherThreshold1);
+        System.out.println();
+        System.out.println("Threshold2 Ciphertext : " + cipherThreshold2);
+        System.out.println();
+        System.out.println("mask : " + mask);
+        System.out.println();
+        System.out.println("cipherMask : " + cipherMask);
+        System.out.println();
+
+        //BigInteger negative = new BigInteger("-1");
+
+
+        BigInteger resultValue1 = paillier.Decryption(ciphertextSum).subtract(paillier.Decryption(cipherThreshold1));
+
+        System.out.println("D(CipherSum) - D(cipherThreshold1) = " + resultValue1);
+        System.out.println();
+
+        BigInteger resultValue2 = paillier.Decryption(ciphertextSum).subtract(paillier.Decryption(cipherThreshold2));
+
+        System.out.println("D(CipherSum) - D(cipherThreshold2) = " + resultValue2);
+        System.out.println();
+
+        //System.out.println("D(cipherValue) = " + paillier.Decryption(cipherValue));
+        /*
+        BigInteger cipherValueMask = cipherValue.multiply(Cmask);
+
+        System.out.println("(cipherValue) * mask = " + cipherValueMask);
+        System.out.println();
+        System.out.println("D(cipherValueMask) = " + paillier.Decryption(cipherValueMask));
+        System.out.println();
+
+        /*
+        BigInteger cipherValue2 = ciphertextSum.multiply(cipherThreshold2);
+
+        System.out.println("(CipherSum2) - (cipherThreshold2) = " + cipherValue2);
+        System.out.println();
+        BigInteger cipherValueMask2 = cipherValue2.multiply(Cmask);
+
+        System.out.println("(cipherValue2) * mask = " + cipherValueMask2);
+        System.out.println();
+        System.out.println("D(cipherValueMask2) = " + paillier.Decryption(cipherValueMask2));
+        System.out.println();
+        /*
+        System.out.println("D(CipherSum) * mask - D(cipherThreshold1) * mask = " + paillier.Decryption(ciphertextSum).multiply(mask).subtract(paillier.Decryption(cipherThreshold1).multiply(mask)));
+        System.out.println("D(CipherSum) * mask - D(cipherThreshold2) * mask = " + paillier.Decryption(ciphertextSum).multiply(mask).subtract(paillier.Decryption(cipherThreshold2).multiply(mask)));
         //System.out.println("Ciphertext Sum [hardcoded] : " + ciphertextList.get(9).multiply(ciphertextList.get(8).multiply(ciphertextList.get(7).multiply(ciphertextList.get(6).multiply(ciphertextList.get(5).multiply(ciphertextList.get(4).multiply(ciphertextList.get(3).multiply(ciphertextList.get(2).multiply(ciphertextList.get(1).multiply(ciphertextList.get(0)))))))))).mod(paillier.nsquare) );
 
-        System.out.println("D(Ciphertext) Sum : " + paillier.Decryption(ciphertextSum));
-        System.out.println("D(cipherThreshold) : " + paillier.Decryption(cipherThreshold));
+        System.out.println("D(CiphertextSum) : " + paillier.Decryption(ciphertextSum));
+        System.out.println("D(CiphertextSum * mask) : " + paillier.Decryption(ciphertextSum.multiply(mask)));
+        System.out.println("D(cipherThreshold1) : " + paillier.Decryption(cipherThreshold1));
+        System.out.println("D(cipherThreshold2) : " + paillier.Decryption(cipherThreshold2));
 
 
 
