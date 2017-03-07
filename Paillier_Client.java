@@ -1,12 +1,15 @@
 import java.math.*;
 import java.util.*;
 import java.io.*;
+import java.lang.*;
 
 /*
  * Generates Keys, Mask
  * E(Threshold, Mask)
+ * Randomizes "Accounts" Plaintesxts
+ * E(plaintesxts)
  *
- * Returns <lambda, g, n, cipherMask, cipherThreshold>
+ * Returns <cipherTesxtList, n, threshold, cipherThreshold, cipherHMask>
  */
 public class Paillier_Client {
 
@@ -72,19 +75,46 @@ public class Paillier_Client {
 
     }
 
-    public String[] returnValues(BigInteger cipherThreshold, BigInteger cipherMask) {
-    	String[] returnvalues = new String[5];
-    	returnvalues[0] = String.valueOf(lambda);
-    	returnvalues[1] = String.valueOf(g);
-    	returnvalues[2] = String.valueOf(n);
-    	returnvalues[3] = String.valueOf(cipherMask);
-    	returnvalues[4] = String.valueOf(cipherThreshold);
+    public ArrayList<BigInteger> RandomizePlaintexts(int min, int max, int accounts) {
 
-    	return returnvalues;
+    	Random rand = new Random();
+    	ArrayList<BigInteger> plaintextlist = new ArrayList<BigInteger>();
 
+    	for (int i = 0; i < accounts; i++)
+    	{
+    		BigInteger check = BigInteger.valueOf(rand.nextInt((max - min) + 1) + min);
+    		BigInteger save = BigInteger.valueOf(rand.nextInt((max - min) + 1) + min);
+    		System.out.println("Checking (" + i + "): " + check);
+    		System.out.println("Savings (" + i + "): " + save);
+    		plaintextlist.add(check);
+    		plaintextlist.add(save);
+    	}
+
+    	return plaintextlist;
     }
 
-    // str = [threshold]
+
+    /*
+     * RETURNS:
+     * "cipherTesxtList, n, threshold, cipherThreshold, cipherHMask"
+     *
+     */
+    public String returnValues(String[] ciphertextList, BigInteger threshold, BigInteger cipherThreshold, BigInteger cipherMask) {
+
+
+    	StringBuilder strb = new StringBuilder();
+
+        for (int i = 0; i < ciphertextList.length; i++)
+            strb.append(ciphertextList[i] + ",");
+    	
+    	strb.append(String.valueOf(n) + "," + String.valueOf(threshold) + "," + String.valueOf(cipherThreshold) + "," + String.valueOf(cipherMask));
+
+    	String result = strb.toString();
+    	
+    	return result;
+    }
+
+    // str = [threshold, #banks]
 	public static void main(String[] str) {
 
 		Paillier_Client paillier = new Paillier_Client();
@@ -92,12 +122,24 @@ public class Paillier_Client {
 		Random rand = new Random();
 
 		BigInteger threshold = new BigInteger(str[0]);
-		BigInteger mask = new BigInteger(String.valueOf(rand.nextInt()));
+		BigInteger mask = new BigInteger(String.valueOf(rand.nextInt((100 - 5) + 1) + 5));
 
 		BigInteger cipherThreshold = paillier.Encryption(threshold);
 		BigInteger cipherMask = paillier.Encryption(mask);
 
-		paillier.returnValues(cipherThreshold, cipherMask);
+		//Set min and max randomized values for bank accounts
+		int min = 5000;
+		int max = 25000;
+		int accounts = Integer.valueOf(str[1]);
+
+		ArrayList<BigInteger> plaintextList = paillier.RandomizePlaintexts(min, max, accounts);
+    	String[] ciphertextList = new String[accounts*2];
+
+    	//For each plaintext element in plaintextList, encrypt and add to ciphertextList
+    	for (int i = 0; i < plaintextList.size(); i++)
+    		ciphertextList[i] = String.valueOf(paillier.Encryption(plaintextList.get(i)));
+
+		paillier.returnValues(ciphertextList, threshold, cipherThreshold, cipherMask);
 
 	}
 }
