@@ -96,20 +96,49 @@ public class Paillier_Client {
 
     /*
      * RETURNS:
-     * "cipherTesxtList, n, threshold, cipherThreshold, cipherHMask"
-     *
+     * "cipherTextList"
      */
-    public String returnValues(String[] ciphertextList, BigInteger threshold, BigInteger cipherThreshold, BigInteger cipherMask) {
-
+    public String returnValue0(String[] ciphertextList) {
 
     	StringBuilder strb = new StringBuilder();
 
         for (int i = 0; i < ciphertextList.length; i++)
             strb.append(ciphertextList[i] + ",");
-    	
-    	strb.append(String.valueOf(n) + "," + String.valueOf(threshold) + "," + String.valueOf(cipherThreshold) + "," + String.valueOf(cipherMask));
 
     	String result = strb.toString();
+    	
+    	return result;
+    }
+
+    /*
+     * RETURNS:
+     * "threshold"
+     */
+    public String returnValue1(BigInteger threshold) {
+
+    	String result = String.ValueOf(threshold);
+
+    	return result;
+    }
+
+    /*
+     * RETURNS:
+     * "cipherThreshold"
+     */
+    public String returnValue2(BigInteger cipherThreshold) {
+
+    	String result = String.ValueOf(cipherThreshold);
+    	
+    	return result;
+    }
+
+    /*
+     * RETURNS:
+     * "cipherMask"
+     */
+    public String returnValue3(BigInteger cipherMask) {
+
+    	String result = String.ValueOf(cipherMask);
     	
     	return result;
     }
@@ -121,7 +150,9 @@ public class Paillier_Client {
 
 		Random rand = new Random();
 
+		//read threshold from args input
 		BigInteger threshold = new BigInteger(str[0]);
+		//Create random mask between 1 and 100
 		BigInteger mask = new BigInteger(String.valueOf(rand.nextInt((100 - 5) + 1) + 5));
 
 		BigInteger cipherThreshold = paillier.Encryption(threshold);
@@ -139,7 +170,13 @@ public class Paillier_Client {
     	for (int i = 0; i < plaintextList.size(); i++)
     		ciphertextList[i] = String.valueOf(paillier.Encryption(plaintextList.get(i)));
 
-		paillier.returnValues(ciphertextList, threshold, cipherThreshold, cipherMask);
+		String value0 = paillier.returnValue0(ciphertextList);
+
+		String value1 = paillier.returnValue1(threshold);
+
+		String value2 = paillier.returnValue2(cipherThreshold);
+
+		String value3 = paillier.returnValue3(cipherMask)
 
 	}
 }
