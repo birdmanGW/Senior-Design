@@ -46,21 +46,38 @@ public class Paillier_Verifier {
         return c.modPow(lambda, nsquare).subtract(BigInteger.ONE).divide(n).multiply(u).mod(n);
     }
 
-    public BigInteger returnValues(BigInteger result) {
+    public String returnValue0(BigInteger decryptedResult) {
+
+    	String result = String.ValueOf(decryptedResult);
+
     	return result;
     }
 
 
-    // str = [lambda, g, n, cipherTextResult]
+    // str = [lambda, g, n, cipherTextResultMask]
     public static void main(String[] str) {
 
     	Paillier_Verifier paillier = new Paillier_Verifier(str);
     	
-    	BigInteger cipherTextResult = new BigInteger(str[3]);
+    	BigInteger cipherTextResultMask = new BigInteger(str[3]);
 
-    	BigInteger result = paillier.Decryption(cipherTextResult);
+    	BigInteger decryptedResult;
 
-    	paillier.returnValues(result);
+    	/*
+    	 * Result does not exceed minimum qualifying balance
+    	 * FAILURE
+    	 */
+        if (paillier.Decryption(cipherTextResultMask).compareTo(new BigInteger("100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")) == 1)
+            decryptedResult = paillier.Decryption(cipherTextResultMask).subtract(n);
+    	/*
+    	 * Result does exceed minimum qualifying balance
+    	 * SUCCESS
+    	 */
+        else
+            decryptedResult = paillier.Decryption(cipherTextResultMask);
+
+
+    	String value0 = paillier.returnValue0(decryptedResult);
 
 
     }

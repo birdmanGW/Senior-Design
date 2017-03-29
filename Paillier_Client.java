@@ -9,7 +9,7 @@ import java.lang.*;
  * Randomizes "Accounts" Plaintesxts
  * E(plaintesxts)
  *
- * Returns <cipherTesxtList, n, threshold, cipherThreshold, cipherHMask>
+ * Returns <cipherTesxtList, n, threshold, cipherThreshold, cipherMask>
  */
 public class Paillier_Client {
 
@@ -134,11 +134,11 @@ public class Paillier_Client {
 
     /*
      * RETURNS:
-     * "cipherMask"
+     * "mask"
      */
-    public String returnValue3(BigInteger cipherMask) {
+    public String returnValue3(BigInteger mask) {
 
-    	String result = String.ValueOf(cipherMask);
+    	String result = String.ValueOf(mask);
     	
     	return result;
     }
@@ -156,7 +156,6 @@ public class Paillier_Client {
 		BigInteger mask = new BigInteger(String.valueOf(rand.nextInt((100 - 5) + 1) + 5));
 
 		BigInteger cipherThreshold = paillier.Encryption(threshold);
-		BigInteger cipherMask = paillier.Encryption(mask);
 
 		//Set min and max randomized values for bank accounts
 		int min = 5000;
@@ -176,7 +175,7 @@ public class Paillier_Client {
 
 		String value2 = paillier.returnValue2(cipherThreshold);
 
-		String value3 = paillier.returnValue3(cipherMask)
+		String value3 = paillier.returnValue3(mask);
 
 	}
 }
